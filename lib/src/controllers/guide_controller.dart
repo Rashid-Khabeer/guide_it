@@ -56,9 +56,13 @@ class GuideController {
   void back() => _actionStream.sink.add(GuideActions.back);
 
   void next() => _actionStream.sink.add(GuideActions.next);
+
+  void close() => _actionStream.sink.add(GuideActions.close);
 }
 
 enum GuideActions {
   back,
-  next;
+  next,
+  close,
+  ;
 }

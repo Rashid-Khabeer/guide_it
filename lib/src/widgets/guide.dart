@@ -169,6 +169,11 @@ class _GuideState extends State<Guide> {
           }
         }
         break;
+      case GuideActions.close:
+        for (final overlay in overlays) {
+          overlay.$2.remove();
+        }
+        overlays.clear();
     }
   }
 }
