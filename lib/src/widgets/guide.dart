@@ -98,6 +98,8 @@ class _GuideState extends State<Guide> {
               return GuideItemWidget(
                 defaultDisplayOptions: widget.displayOptions,
                 item: item,
+                onBack: _controller.back,
+                onNext: _controller.next,
                 onTap: () {
                   if (widget.disableAutoNext) return;
                   overlays[currentActive].$2.remove();

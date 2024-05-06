@@ -15,10 +15,15 @@ class GuideItemWidget extends StatefulWidget {
     required this.defaultDisplayOptions,
     required this.item,
     this.onTap,
+    this.onNext,
+    this.onBack,
   });
+
   final GuideDisplayOptions defaultDisplayOptions;
   final GuideItem item;
   final VoidCallback? onTap;
+  final VoidCallback? onNext;
+  final VoidCallback? onBack;
 
   @override
   State<GuideItemWidget> createState() => _GuideItemWidgetState();
@@ -164,6 +169,13 @@ class _GuideItemWidgetState extends State<GuideItemWidget>
           displayOptions.highlightColor ?? Colors.white.withOpacity(0.2),
       body: GestureDetector(
         onTap: widget.onTap,
+        onPanEnd: (DragEndDetails details) {
+          if (details.velocity.pixelsPerSecond.dx < 0) {
+            widget.onNext?.call();
+          } else if (details.velocity.pixelsPerSecond.dx > 0) {
+            widget.onBack?.call();
+          }
+        },
         child: Stack(
           children: [
             CustomPaint(
