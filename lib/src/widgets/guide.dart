@@ -99,7 +99,12 @@ class _GuideState extends State<Guide> {
                 defaultDisplayOptions: widget.displayOptions,
                 item: item,
                 onBack: _controller.back,
-                onNext: _controller.next,
+                onNext: () {
+                  if (currentActive >= overlays.length - 1) {
+                    action?.onComplete?.call();
+                  }
+                  _controller.next();
+                },
                 onTap: () {
                   if (widget.disableAutoNext) return;
                   overlays[currentActive].$2.remove();
@@ -173,7 +178,7 @@ class _GuideState extends State<Guide> {
         break;
       case GuideActions.close:
         for (final overlay in overlays) {
-          if(overlay.$2.mounted) {
+          if (overlay.$2.mounted) {
             overlay.$2.remove();
           }
         }
