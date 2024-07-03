@@ -82,7 +82,10 @@ class _GuideState extends State<Guide> {
   @override
   Widget build(BuildContext context) => widget.child;
 
+  ShowGuideParams? _action;
+
   Future<void> show([ShowGuideParams? action]) async {
+    _action = action;
     if (action != null && !action.force && !_shouldShow()) {
       action.onComplete?.call();
       return;
@@ -164,6 +167,10 @@ class _GuideState extends State<Guide> {
         break;
       case GuideActions.next:
         overlays[currentActive].$2.remove();
+        if (currentActive >= overlays.length - 1) {
+          _action?.onComplete?.call();
+          break;
+        }
         for (currentActive = currentActive + 1;
             currentActive < overlays.length;
             currentActive++) {
