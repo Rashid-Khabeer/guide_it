@@ -45,13 +45,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return [
       GuideItem(
         targetWidgetKey: _textKey,
-        child: const Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 16,
+        child: Column(
+          // alignment: WrapAlignment.center,
+          // crossAxisAlignment: WrapCrossAlignment.center,
+          // spacing: 16,
           children: [
             Icon(Icons.help_rounded),
-            Text("Welcome to the GuideIt example"),
+            for (int i = 0; i < 50; i++) Text("Welcome to the GuideIt example"),
           ],
         ),
       ),
@@ -102,7 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 16,
           children: [
-            Text("And this is the Floating Action Button, press it to replay the guide"),
+            Text(
+                "And this is the Floating Action Button, press it to replay the guide"),
           ],
         ),
       ),
@@ -117,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
       controller: _controller,
       displayOptions: GuideDisplayOptions(
         highlightColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
-        backgroundColor: Theme.of(context).colorScheme.background.withOpacity(0.85),
+        backgroundColor:
+            Theme.of(context).colorScheme.background.withOpacity(0.85),
         animationOptions: const GuideAnimationOptions(
           animate: true,
           fade: true,
@@ -167,7 +169,8 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: FloatingActionButton(
           key: _fabKey,
           onPressed: () {
-            _controller.showTutorial(params: ShowGuideParams(id: _guideId, force: true));
+            _controller.showTutorial(
+                params: ShowGuideParams(id: _guideId, force: true));
           },
           child: const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
