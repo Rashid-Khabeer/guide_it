@@ -8,6 +8,19 @@ class ShowGuideParams {
     this.onComplete,
   });
 
+  ShowGuideParams copyWith({
+    String? id,
+    bool? force,
+    VoidCallback? onComplete,
+    GuideActions? action,
+  }) {
+    return ShowGuideParams(
+      id: id ?? this.id,
+      force: force ?? this.force,
+      onComplete: onComplete ?? this.onComplete,
+    );
+  }
+
   /// The identifier of the guide to be shown.
   ///
   /// This should be used to uniquely identify the guide.
@@ -25,10 +38,31 @@ class GuideController {
   final StreamController<ShowGuideParams> _showStream =
       StreamController.broadcast();
 
+  final StreamController<GuideActions> _actionStream =
+      StreamController.broadcast();
+
   Stream<ShowGuideParams> get show => _showStream.stream;
+
+  Stream<GuideActions> get actions => _actionStream.stream;
 
   void showTutorial({required ShowGuideParams params}) =>
       _showStream.sink.add(params);
 
-  void dispose() => _showStream.close();
+  void dispose() {
+    _actionStream.close();
+    _showStream.close();
+  }
+
+  void back() => _actionStream.sink.add(GuideActions.back);
+
+  void next() => _actionStream.sink.add(GuideActions.next);
+
+  void close() => _actionStream.sink.add(GuideActions.close);
+}
+
+enum GuideActions {
+  back,
+  next,
+  close,
+  ;
 }

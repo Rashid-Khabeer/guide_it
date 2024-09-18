@@ -15,10 +15,15 @@ class GuideItemWidget extends StatefulWidget {
     required this.defaultDisplayOptions,
     required this.item,
     this.onTap,
+    this.onNext,
+    this.onBack,
   });
+
   final GuideDisplayOptions defaultDisplayOptions;
   final GuideItem item;
   final VoidCallback? onTap;
+  final VoidCallback? onNext;
+  final VoidCallback? onBack;
 
   @override
   State<GuideItemWidget> createState() => _GuideItemWidgetState();
@@ -195,89 +200,93 @@ class _GuideItemWidgetState extends State<GuideItemWidget>
           displayOptions.highlightColor ?? Colors.white.withOpacity(0.2),
       body: GestureDetector(
         onTap: widget.onTap,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: MediaQuery.of(context).size,
-                painter: HighlightPainter(
-                  dx: _itemPos.dx + (_itemSize.width / 2),
-                  dy: _itemPos.dy + (_itemSize.height / 2),
-                  width: _itemSize.width,
-                  height: _itemSize.height,
-                  color: displayOptions.backgroundColor ??
-                      Colors.black.withOpacity(0.75),
-                  borderRadius: displayOptions.highlightRadius,
+        onPanEnd: (DragEndDetails details) {
+          if (details.velocity.pixelsPerSecond.dx < 0) {
+            widget.onNext?.call();
+          } else if (details.velocity.pixelsPerSecond.dx > 0) {
+            widget.onBack?.call();
+          }
+        },
+        child: Stack(
+          children: [
+            CustomPaint(
+              size: MediaQuery.of(context).size,
+              painter: HighlightPainter(
+                dx: _itemPos.dx + (_itemSize.width / 2),
+                dy: _itemPos.dy + (_itemSize.height / 2),
+                width: _itemSize.width,
+                height: _itemSize.height,
+                color: displayOptions.backgroundColor ??
+                    Colors.black.withOpacity(0.75),
+                borderRadius: displayOptions.highlightRadius,
+              ),
+            ),
+            if (widget.item.targetWidgetKey != null) ...[
+              Positioned(
+                width: mediaSize.width,
+                top: _direction == AxisDirection.up
+                    ? _itemPos.dy +
+                        _itemSize.height +
+                        _axisOffset(
+                          displayOptions.defaultIndicator.padding.top,
+                        ) +
+                        _axisOffset(displayOptions.widgetPadding.top) +
+                        _indicatorSize
+                    : null,
+                bottom: _direction == AxisDirection.down
+                    ? mediaSize.height -
+                        _itemPos.dy -
+                        _axisOffset(
+                          displayOptions.defaultIndicator.padding.bottom,
+                        ) -
+                        _axisOffset(displayOptions.widgetPadding.bottom) +
+                        _indicatorSize
+                    : null,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: mediaSize.width,
+                    maxHeight: mediaSize.height,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: displayOptions.widgetPadding.left,
+                      right: displayOptions.widgetPadding.right,
+                    ),
+                    child: _buildElement(),
+                  ),
                 ),
               ),
-              if (widget.item.targetWidgetKey != null) ...[
-                Positioned(
-                  width: mediaSize.width,
-                  top: _direction == AxisDirection.up
-                      ? _itemPos.dy +
-                          _itemSize.height +
-                          _axisOffset(
-                            displayOptions.defaultIndicator.padding.top,
-                          ) +
-                          _axisOffset(displayOptions.widgetPadding.top) +
-                          _indicatorSize
-                      : null,
-                  bottom: _direction == AxisDirection.down
-                      ? mediaSize.height -
-                          _itemPos.dy -
-                          _axisOffset(
-                            displayOptions.defaultIndicator.padding.bottom,
-                          ) -
-                          _axisOffset(displayOptions.widgetPadding.bottom) +
-                          _indicatorSize
-                      : null,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: mediaSize.width,
-                      maxHeight: mediaSize.height,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: displayOptions.widgetPadding.left,
-                        right: displayOptions.widgetPadding.right,
-                      ),
-                      child: _buildElement(),
-                    ),
-                  ),
+              Positioned(
+                top: _direction == AxisDirection.up
+                    ? _itemPos.dy +
+                        _itemSize.height +
+                        _axisOffset(displayOptions.defaultIndicator.padding.top)
+                    : null,
+                bottom: _direction == AxisDirection.down
+                    ? mediaSize.height -
+                        _itemPos.dy -
+                        _axisOffset(
+                          displayOptions.defaultIndicator.padding.bottom,
+                        )
+                    : null,
+                left: clampDouble(
+                  _itemPos.dx + (_itemSize.width / 2) - (_indicatorSize / 2),
+                  0,
+                  mediaSize.width,
                 ),
-                Positioned(
-                  top: _direction == AxisDirection.up
-                      ? _itemPos.dy +
-                          _itemSize.height +
-                          _axisOffset(
-                              displayOptions.defaultIndicator.padding.top)
-                      : null,
-                  bottom: _direction == AxisDirection.down
-                      ? mediaSize.height -
-                          _itemPos.dy -
-                          _axisOffset(
-                            displayOptions.defaultIndicator.padding.bottom,
-                          )
-                      : null,
-                  left: clampDouble(
-                    _itemPos.dx + (_itemSize.width / 2) - (_indicatorSize / 2),
-                    0,
-                    mediaSize.width,
-                  ),
-                  child: GuideIndicatorWidget(
-                    indicator: displayOptions.defaultIndicator,
-                    direction: _direction,
-                  ),
+                child: GuideIndicatorWidget(
+                  indicator: displayOptions.defaultIndicator,
+                  direction: _direction,
                 ),
-              ] else
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 48),
-                    child: widget.item.child,
-                  ),
+              ),
+            ] else
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 48),
+                  child: widget.item.child,
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
