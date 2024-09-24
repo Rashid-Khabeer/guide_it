@@ -57,13 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       GuideItem(
         targetWidgetKey: _iconKey,
-        child: const Wrap(
+        child: Wrap(
           alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 16,
           children: [
             Icon(Icons.place_rounded),
-            Text("This is the first icon, tap anywhere to continue"),
+            for (int i = 0; i < 100; i++)
+              Text("This is the first icon, tap anywhere to continue"),
           ],
         ),
       ),

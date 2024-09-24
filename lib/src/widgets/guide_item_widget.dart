@@ -241,7 +241,7 @@ class _GuideItemWidgetState extends State<GuideItemWidget>
                         ) -
                         _axisOffset(displayOptions.widgetPadding.bottom) +
                         _indicatorSize
-                    : null,
+                    : MediaQuery.paddingOf(context).bottom,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: mediaSize.width,
